@@ -1,0 +1,184 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            * { box-sizing: border-box; }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                user-select: none;
+            }
+
+            #body {
+                padding: 8px;
+                width: 347px;
+                height: 440px;
+                background: #4D4D4D;
+            }
+
+            #body table {
+                width: 100%;
+                text-align: center;
+                table-layout: fixed;
+                border-collapse: collapse;
+                margin: auto;
+            }
+
+            .item { padding: 10px 2px 3px 2px; }
+            .item img { filter: grayscale(1) brightness(0.25); }
+            .item.obtained img { 
+                opacity: 1.0 !important; 
+                filter: drop-shadow(2px 2px 2px #0008) !important;
+            }
+            .item.useless img {
+                filter: brightness(0.2) drop-shadow(0px 0px 4px red);
+            }
+            .item.mandatory img {
+                filter: brightness(0.2) drop-shadow(0px 0px 4px yellow);
+            }
+            .item.hinted img {
+                filter: brightness(0.2) drop-shadow(0px 0px 4px lime);
+            }
+            .item img {
+                height: 44px;
+            }
+            
+            .vertical-separator { height: 10px; }
+        </style>
+    </head>
+    <body>
+        <section id="body">
+            <table>
+                <tr>
+                    <td class="item obtained toggleable" tier="1" max-tier="5"><img src="images/sword_1.png"></td>
+                    <td class="item toggleable" tier="1" max-tier="2"><img src="images/flail_1.png"></td>
+                    <td class="item toggleable" tier="1" max-tier="2"><img src="images/bow_1.png"></td>
+                    <td class="item toggleable"><img src="images/fire_wand.png"></td>
+                    <td class="item toggleable"><img src="images/ice_wand.png"></td>
+                    <td class="item toggleable"><img src="images/spirit_wand.png"></td>
+                </tr>
+
+                <tr>
+                    <td class="item obtained toggleable" tier="1" max-tier="4"><img src="images/armor_1.png"></td>
+                    <td class="item toggleable"><img src="images/boots_2.png"></td>
+                    <td class="item toggleable"><img src="images/boots_3.png"></td>
+                    <td class="item toggleable"><img src="images/boots_4.png"></td>
+                    <td></td>
+                    <td class="item toggleable"><img src="images/silver_armlet.png"></td>
+                </tr>
+
+                <tr>
+                    <td class="item toggleable" tier="1" max-tier="2"><img src="images/magic_earth_1.png"></td>
+                    <td class="item toggleable" tier="1" max-tier="2"><img src="images/magic_water_1.png"></td>
+                    <td class="item toggleable" tier="1" max-tier="2"><img src="images/magic_fire_1.png"></td>
+                    <td class="item toggleable" tier="1" max-tier="2"><img src="images/magic_wind_1.png"></td>
+                    <td></td>
+                    <td class="item toggleable"><img src="images/navas_charm.png"></td>
+                </tr>
+
+                <tr>
+                    <td class="item toggleable"><img src="images/bomb.png"></td>
+                    <td class="item toggleable"><img src="images/spring_bean.png"></td>
+                    <td class="item toggleable"><img src="images/power_glove.png"></td>
+                    <td class="item toggleable"><img src="images/sand_cape.png"></td>
+                    <td></td>
+                    <td class="item toggleable"><img src="images/olgas_ring.png"></td>
+                </tr>
+                
+                <tr>
+                    <td class="item toggleable"><img src="images/secret_pass.png"></td>
+                    <td class="item toggleable"><img src="images/bouquet.png"></td>
+                    <td class="item toggleable"><img src="images/tree_gem.png"></td>
+                    <td class="item toggleable"><img src="images/aqua_cape.png"></td>
+                    <td></td>
+                    <td class="item toggleable"><img src="images/recovery_ring.png"></td>
+                </tr>
+            </table>
+
+            <div class="vertical-separator"></div>
+
+            <table>
+                <tr>
+                    <td class="item toggleable" rowspan="2"><img src="images/crest_topaz.png"></td>
+                    <td class="item toggleable"><img src="images/crest_ruby.png"></td>
+                    <td class="item toggleable" rowspan="2"><img src="images/crest_diamond.png"></td>
+                    <td class="item toggleable"><img src="images/crest_sapphire.png"></td>
+                    <td class="item toggleable" rowspan="2"><img src="images/crest_garnet.png"></td>
+                </tr>
+                <tr>
+                    <td class="item toggleable"><img src="images/crest_agate.png"></td>
+                    <td class="item toggleable"><img src="images/crest_emerald.png"></td>
+                </tr>
+            </table>
+        </section>
+
+        <script>
+            let updateElementTier = function(element, tier) {
+                element.attributes['tier'].value = tier;
+                var image = element.getElementsByTagName('img')[0];
+                var imageSrc = image.attributes['src'].value;
+                var newImageSrc = imageSrc.substr(0, imageSrc.length - 5) + tier + ".png";
+                image.attributes['src'].value = newImageSrc;
+            }
+
+            let items = document.getElementsByClassName('toggleable');
+            for(let item of items) {
+                item.onclick = () => {
+                    if(item.classList.contains('obtained') && item.attributes['tier'] !== undefined) {
+                        var tier = parseInt(item.attributes['tier'].value);
+                        var maxTier = parseInt(item.attributes['max-tier'].value);
+                        if(tier < maxTier) {
+                            updateElementTier(item, ++tier);
+                        }
+                    }
+                    else {
+                        item.classList.add('obtained');
+                    }
+                };
+                
+                item.oncontextmenu = () => {
+                    if(item.classList.contains('obtained')) {
+                        if(item.attributes['tier'] !== undefined) {
+                            var tier = parseInt(item.attributes['tier'].value);
+                            if(tier > 1) {
+                                updateElementTier(item, --tier);
+                                return false;
+                            } 
+                        }
+                        
+                        item.classList.remove('obtained');
+                    }
+                    else if(item.classList.contains('useless'))
+                    {
+                        item.classList.remove('useless');
+                    }
+                    else if(item.classList.contains('mandatory'))
+                    {
+                        item.classList.remove('mandatory');
+                        item.classList.add('useless');
+                    }
+                    else if(item.classList.contains('hinted'))
+                    {
+                        item.classList.remove('hinted');
+                        item.classList.add('mandatory');
+                    }
+                    else
+                    {
+                        item.classList.add('hinted');
+                    }
+                    return false;
+                };
+            }
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const bgColor = urlParams.get('bgcolor');
+            if(bgColor !== null)
+            {
+                var body = document.getElementById('body');
+                body.setAttribute('style', "background:" + bgColor +";");
+            }
+        </script>
+    </body>
+</html>
